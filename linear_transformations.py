@@ -44,15 +44,21 @@ class LinearTransformation(object):
 
 #------------------------------------------------------------------------------ Transformations
 
-    def scale_xyz(self, scale_factor, point):
+    def scale_xyz(self, scale_factor_xyz, point):
         """
-        @params self, scaling factor of xyz, tuple of 'self.matrix' size
+        @params self, scaling factor of xyz (tuple) or s(float), tuple of 'self.matrix' size
         @return tuple
         """
+        if isinstance(scale_factor_xyz, float) or isinstance(scale_factor_xyz, int):
+            # if true scale xyz by scale factor
+            scale_factor_x = scale_factor_y = scale_factor_z = scale_factor_xyz
+        else:
+            # tuple unzipping
+            scale_factor_x, scale_factor_y, scale_factor_z = (scale_factor_xyz)
         self._check_size(point, self.scale_xyz) # function name
-        std_matrix_repr = np.array([[scale_factor, 0, 0, 0],
-                                    [0, scale_factor, 0, 0],
-                                    [0, 0, scale_factor, 0],
+        std_matrix_repr = np.array([[scale_factor_x, 0, 0, 0],
+                                    [0, scale_factor_y, 0, 0],
+                                    [0, 0, scale_factor_z, 0],
                                     [0, 0, 0, 1]])
         vector_repr = np.array(point)
         return tuple(np.dot(std_matrix_repr, vector_repr))
@@ -102,15 +108,16 @@ class LinearTransformation(object):
         vector_repr = np.array(point)
         return tuple(np.dot(std_matrix_repr, vector_repr))
 
-    def translate_xyz(self, translation, point):
+    def translate_xyz(self, translation_xyz, point):
         """
-        @params self, translation of xyz, tuple of 'self.matrix' size
+        @params self, translation xyz, tuple of 'self.matrix' size
         @return tuple
         """
         self._check_size(point, self.translate_xyz) # function name
-        std_matrix_repr = np.array([[1, 0, 0, translation],
-                                    [0, 1, 0, translation],
-                                    [0, 0, 1, translation],
+        translation_x, translation_y, translation_z = (translation_xyz) # tuple unzipping
+        std_matrix_repr = np.array([[1, 0, 0, translation_x],
+                                    [0, 1, 0, translation_y],
+                                    [0, 0, 1, translation_z],
                                     [0, 0, 0, 1]])
         vector_repr = np.array(point)
         return tuple(np.dot(std_matrix_repr, vector_repr))
@@ -124,4 +131,4 @@ class LinearTransformation(object):
 
 lt = LinearTransformation(4)
 
-print(lt.scale_xyz(5, (1, 2, 3, 1)))
+print(lt.scale_xyz(2, (1, 2, 3, 1)))
